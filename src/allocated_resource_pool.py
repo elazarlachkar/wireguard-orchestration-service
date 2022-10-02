@@ -9,23 +9,24 @@ class AllocatedResourcePool:
     The class manages its resources by allocating each resource once, and then blocking further usage of the resource
     until a matching free is called.
     """
-    def __init__(self, resources: typing.List[typing.Any]):
+    def __init__(self, resources: typing.Set[typing.Any]):
         self._resources = resources
         self._used_resources = set()
 
     def allocate(self) -> typing.Any:
         """
-        Allocates a resource out of the pool available resources and returns it.
+        Allocates a resource out of the pool's available resources and returns it.
         This resource will be blocked to any other usage, until the free method is called.
 
         :raises StopIteration: In case there are no more available resources.
         """
-        for resource in self._resources:
-            if resource not in self._used_resources:
-                self._used_resources.add(resource)
-                return resource
-
-        raise StopIteration("Resource pool is Empty! Free an allocated resource in order to refill the pool")
+        available_resources = self._resources - self._used_resources
+        if len(available_resources) > 0:
+            allocated_resource = available_resources.pop()
+            self._used_resources.add(allocated_resource)
+            return allocated_resource
+        else:
+            raise StopIteration("Resource pool is Empty! Free an allocated resource in order to refill the pool")
 
     def free(self, resource: typing.Any):
         """

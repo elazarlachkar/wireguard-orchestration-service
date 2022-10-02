@@ -7,10 +7,10 @@ from tenant import Tenant
 
 
 class TenantCreator(CachedResourceCreator):
-    VIRTUAL_NETWORKS = [
+    VIRTUAL_NETWORKS = {
         ipaddress.IPv4Network("192.168.1.0/24"),
         ipaddress.IPv4Network("72.16.0.0/16")
-    ]
+    }
 
     def __init__(self):
         super().__init__()
@@ -22,7 +22,7 @@ class TenantCreator(CachedResourceCreator):
     def _create_resource(self) -> Tenant:
         try:
             virtual_network: ipaddress.IPv4Network = self._virtual_network_pool.allocate()
-        except IndexError:
+        except StopIteration:
             raise Exception("Failed to create new tenant, no network available!")
 
         overlay_network = OverlayNetwork(virtual_network)
