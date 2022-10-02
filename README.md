@@ -6,10 +6,11 @@ This repository contains the orchestration service for Wireguard VPN. <br/>
 ### Service API
 
 The service is built on top of the [WebSocket Protocol](https://www.rfc-editor.org/rfc/rfc6455). <br/>
-Each peer maintains a persistent connection to the orchestration service throughout its connection to the VPN. <br/>
-Each tenant is identified by a unique ID.
+Each peer maintains a persistent connection to the orchestration service throughout its VPN session. This connection
+is used for bidirectional communication between the peer and the service.<br/>
 
 #### Peer Onboarding
+Each tenant is identified by a unique ID. <br/>
 On connection, the peer chooses what tenant to join by appending the tenant ID to the URI. If the requested tenant 
 doesn't exist, it's created for him. 
 
@@ -74,3 +75,15 @@ The message announcing the client's removal should be in the following JSON form
   "removed_peer": "{CLIENT'S PRIVATE IP ADDRESS}"
 }
 ```
+
+### How to Run the Service?
+
+The service can be run as a Docker container. <br/>
+To build the image: `docker build -t wireguard-orchestration-service:1.0 .` <br/>
+To start the service: `docker run -p 8000:8000 wireguard-orchestration-service:1.0` <br/>
+
+
+### Technology
+
+The service is implements in Python 3.10, on top on [FastAPI](https://fastapi.tiangolo.com/). <br/>
+[Pydantic](https://pydantic-docs.helpmanual.io/) is used for messages parsing and validation. <br/>
