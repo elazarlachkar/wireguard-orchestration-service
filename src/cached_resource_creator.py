@@ -13,17 +13,19 @@ class CachedResourceCreator(abc.ABC):
 
     The `remove` method allows the user to remove an existing resource from the cache. Next time the resource is
     requested, it will be recreated.
+
+    This is an abstract class. Subclasses should implement the `_create_resource` method with the creation logic.
     """
     def __init__(self):
-        self._resources: dict[str, typing.Any] = {}
+        self._resources: typing.Dict[str, typing.Any] = {}
 
     @abc.abstractmethod
     def _create_resource(self) -> typing.Any:
         """
         Subclasses should implement here the resource creation.
-        A resource will be created only if a user requested it and it doesn't exist in the cache.
+        A resource will be created only if a user requested it while it doesn't exist in the cache.
         """
-        pass
+        raise NotImplementedError()
 
     def get(self, resource_id: str) -> typing.Any:
         """
@@ -37,7 +39,7 @@ class CachedResourceCreator(abc.ABC):
 
         return self._resources.get(resource_id)
 
-    def remove(self, resource_id):
+    def remove(self, resource_id: str):
         """
         Removes a resource from the cache. Next time the resource is requested, it will be recreated.
         """
