@@ -17,7 +17,8 @@ async def client_endpoint(websocket: WebSocket, tenant_id: str):
     tenant = None
 
     try:
-        # Acquiring cache lock so that the tenant won't be removed while adding a new peer to it
+        # Acquiring cache lock so that the tenant won't be removed while adding a new peer to it, and that the same
+        # tenant won't be created twice.
         with tenant_creator.cache_lock:
             tenant = tenant_creator.get(tenant_id)
             await tenant.add_peer(websocket)
@@ -37,7 +38,7 @@ async def client_endpoint(websocket: WebSocket, tenant_id: str):
         if tenant is not None:
             await tenant.remove_peer(websocket)
 
-            # Acquiring cache lock so that a new peer won't be added to the tenant while removing it from cache
+            # Acquiring cache lock so that a new peer won't be added to the tenant while removing it from cache.
             with tenant_creator.cache_lock:
                 if tenant.get_active_peers_number() == 0:
                     tenant_creator.remove(tenant_id)
