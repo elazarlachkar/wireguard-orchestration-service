@@ -10,12 +10,28 @@ from tenant_peer import TenantPeer
 
 
 class Tenant:
+    """
+    A tenant contains multiple peers that can communicate with each other.
+
+    Each peer has a public key, and a virtual IP address that belongs to the tenant's network. Using those 2 items,
+    other peers can communicate with it.
+    """
     def __init__(self, overlay_network: OverlayNetwork):
+        """
+        :param overlay_network: The tenant's overlay network, used to allocate virtual IP addresses to the peers.
+        """
         self._peers: typing.Dict[fastapi.WebSocket, TenantPeer] = {}
         self._overlay_network = overlay_network
         self._logger = get_logger()
 
     async def add_peer(self, websocket: fastapi.WebSocket):
+        """
+        Adds a peer to the tenant.
+        After a virtual IP address is allocated to the new peer in the tenant's network, the joining handshake is
+        completed and a broadcast message is sent to all existing peers notifying them of the new peer.
+
+        :param websocket: The WebSocket connection to the peer.
+        """
         current_tenant_peers_info = [peer.get_info() for peer in self._peers.values()]
 
         new_peer_ip_address = self._overlay_network.allocate_ip_address()
@@ -38,6 +54,13 @@ class Tenant:
         self._logger.info(f"New peer join successfully the tenant! Peer Info: {new_peer_info}")
 
     async def remove_peer(self, websocket: fastapi.WebSocket):
+        """
+        Removes a peer from the tenant.
+        The peer's virtual IP address is freed (to be used by future peers in the tenant), and then a broadcast message
+        is sent to all the tenant's peers notifying them of the peer's removal.
+
+        :param websocket: The WebSocket connection to the peer.
+        """
         self._logger.info(f"Removing client {websocket.client.host} from tenant")
         removed_peer = self._peers.pop(websocket)
         removed_peer_ip = removed_peer.get_info().virtual_ip
@@ -50,6 +73,9 @@ class Tenant:
         self._logger.info(f"Freed virtual IP {removed_peer_ip} to future use")
 
     async def _broadcast_notification(self, notification: PeerInfo | PeerRemovalMessage):
+        """
+        Broadcasts a notification to all existing peers in the tenant.
+        """
         coroutines = [peer.push_notification(notification, raise_error=False) for peer in self._peers.values()]
         await asyncio.gather(*coroutines)
 

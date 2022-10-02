@@ -5,7 +5,7 @@ from logger import get_logger, initialize_logger
 from tenant_creator import TenantCreator
 
 app = FastAPI()
-tenant_pool = TenantCreator()
+tenant_creator = TenantCreator()
 
 
 @app.websocket("/tenants/{tenant_id}")
@@ -17,8 +17,10 @@ async def client_endpoint(websocket: WebSocket, tenant_id: str):
     tenant = None
 
     try:
-        tenant = tenant_pool.get(tenant_id)
-        await tenant.add_peer(websocket)
+        # Acquiring cache lock so that the tenant won't be removed while adding a new peer to it
+        with tenant_creator.cache_lock:
+            tenant = tenant_creator.get(tenant_id)
+            await tenant.add_peer(websocket)
 
         # Client should not send any more messages to the server, and only receive push notifications.
         # This will block until the client disconnection that would raise `WebSocketDisconnect` exception.
@@ -35,9 +37,10 @@ async def client_endpoint(websocket: WebSocket, tenant_id: str):
         if tenant is not None:
             await tenant.remove_peer(websocket)
 
-            # TODO: Maybe lock?
-            if tenant.get_active_peers_number() == 0:
-                tenant_pool.remove(tenant_id)
+            # Acquiring cache lock so that a new peer won't be added to the tenant while removing it from cache
+            with tenant_creator.cache_lock:
+                if tenant.get_active_peers_number() == 0:
+                    tenant_creator.remove(tenant_id)
 
 
 @app.on_event("startup")
