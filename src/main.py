@@ -24,7 +24,7 @@ async def client_endpoint(websocket: WebSocket, tenant_id: str):
             await tenant.add_peer(websocket)
 
         # Client should not send any more messages to the server, and only receive push notifications.
-        # This will block until the client disconnection that would raise `WebSocketDisconnect` exception.
+        # This will block until the client disconnection (that would raise `WebSocketDisconnect` exception).
         await websocket.receive_text()
 
     except WebSocketDisconnect:
