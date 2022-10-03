@@ -3,6 +3,7 @@ import threading
 
 from allocated_resource_pool import AllocatedResourcePool
 from cached_resource_creator import CachedResourceCreator
+from exceptions import TenantCreationError
 from overlay_network import OverlayNetwork
 from tenant import Tenant
 
@@ -40,7 +41,7 @@ class TenantCreator(CachedResourceCreator):
         try:
             virtual_network: ipaddress.IPv4Network = self._virtual_network_pool.allocate()
         except StopIteration:
-            raise Exception("Failed to create new tenant, no network available!")
+            raise TenantCreationError("Failed to create new tenant, no network available!")
 
         overlay_network = OverlayNetwork(virtual_network)
         return Tenant(overlay_network)
