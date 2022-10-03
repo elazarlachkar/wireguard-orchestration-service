@@ -21,12 +21,12 @@ class AllocatedResourcePool:
         :raises StopIteration: In case there are no more available resources.
         """
         available_resources = self._resources - self._used_resources
-        if len(available_resources) > 0:
+        try:
             allocated_resource = available_resources.pop()
             self._used_resources.add(allocated_resource)
             return allocated_resource
-        else:
-            raise StopIteration("Resource pool is Empty! Free an allocated resource in order to refill the pool")
+        except KeyError:
+            raise StopIteration("No available resources! Free an allocated resource in order to refill the pool")
 
     def free(self, resource: typing.Any):
         """
