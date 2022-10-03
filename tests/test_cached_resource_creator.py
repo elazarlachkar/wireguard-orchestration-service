@@ -1,6 +1,6 @@
 import mock
 
-from src.cached_resource_creator import CachedResourceCreator
+from wireguard_orchestration.cached_resource_creator import CachedResourceCreator
 
 RESOURCE_ID = "randomID"
 

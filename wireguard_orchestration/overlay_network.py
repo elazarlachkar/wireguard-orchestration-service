@@ -1,6 +1,6 @@
 import ipaddress
 
-from allocated_resource_pool import AllocatedResourcePool
+from wireguard_orchestration.allocated_resource_pool import AllocatedResourcePool
 
 
 class OverlayNetwork:

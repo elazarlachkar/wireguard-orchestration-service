@@ -3,11 +3,11 @@ import typing
 
 import fastapi
 
-from entities import PeerInfo, PeerRemovalMessage
-from exceptions import PeerJoinError, PeerRemovalError
-from logger import get_logger
-from overlay_network import OverlayNetwork
-from tenant_peer import TenantPeer
+from wireguard_orchestration.entities import PeerInfo, PeerRemovalMessage
+from wireguard_orchestration.exceptions import PeerJoinError, PeerRemovalError
+from wireguard_orchestration.logger import get_logger
+from wireguard_orchestration.overlay_network import OverlayNetwork
+from wireguard_orchestration.tenant_peer import TenantPeer
 
 
 class Tenant:

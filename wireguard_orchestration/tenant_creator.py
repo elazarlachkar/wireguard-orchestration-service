@@ -1,11 +1,11 @@
 import ipaddress
 import threading
 
-from allocated_resource_pool import AllocatedResourcePool
-from cached_resource_creator import CachedResourceCreator
-from exceptions import TenantCreationError
-from overlay_network import OverlayNetwork
-from tenant import Tenant
+from wireguard_orchestration.allocated_resource_pool import AllocatedResourcePool
+from wireguard_orchestration.cached_resource_creator import CachedResourceCreator
+from wireguard_orchestration.exceptions import TenantCreationError
+from wireguard_orchestration.overlay_network import OverlayNetwork
+from wireguard_orchestration.tenant import Tenant
 
 
 class TenantCreator(CachedResourceCreator):

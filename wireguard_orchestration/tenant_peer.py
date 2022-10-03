@@ -3,8 +3,8 @@ import typing
 
 import fastapi
 
-from entities import ClientJoinRequest, ClientJoinResponse, PeerInfo, PeerRemovalMessage
-from logger import get_logger
+from wireguard_orchestration.entities import ClientJoinRequest, ClientJoinResponse, PeerInfo, PeerRemovalMessage
+from wireguard_orchestration.logger import get_logger
 
 
 class TenantPeer:
