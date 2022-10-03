@@ -1,7 +1,7 @@
 import mock
 import pytest
 
-from src.allocated_resource_pool import AllocatedResourcePool
+from wireguard_orchestration.allocated_resource_pool import AllocatedResourcePool
 
 
 def test_sanity():

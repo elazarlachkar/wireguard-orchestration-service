@@ -1,8 +1,8 @@
 import uvicorn
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, status
 
-from logger import get_logger, initialize_logger
-from tenant_creator import TenantCreator
+from wireguard_orchestration.logger import get_logger, initialize_logger
+from wireguard_orchestration.tenant_creator import TenantCreator
 
 app = FastAPI()
 tenant_creator = TenantCreator()
